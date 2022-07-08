@@ -76,7 +76,7 @@ const addBook = async (request, h) => {
   return response;
 };
 
-const getAllBook = (request, h) => ({
+const getAllBook = () => ({
   // const { id } = request.params;
 
   status: 'success',
@@ -86,26 +86,27 @@ const getAllBook = (request, h) => ({
 });
 
 const getBookById = (request, h) => {
-  const { id } = request.params;
+  const { bookId } = request.params;
+  const book = books.filter((amount) => amount.id === bookId)[0];
   
-  const book = books.filter((amount) => amount.id === id)[0];
-  
-  if(book !== undefined) {
+  if (book !== undefined) {
     return {
       status: 'success',
       data: {
-        books: books.map((item) => (item.filter({id: item.id, name:item.name, publisher: item.publisher})))
+        book,
       },
-    }
-  };
+    };
+  }
 
-  const response = h.response({
-    status: 'fail',
-    message: 'Buku tidak ditemukan',
-  })
-  
-  response.code(404);
-  return response;
+  if (!book) {
+    const response = h.response({
+      status: 'fail',
+      message: 'Buku tidak ditemukan',
+    });
+    
+    response.code(404);
+    return response;
+  }
 };
 
 const updateBookById = (request, h) => {
